@@ -74,68 +74,29 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const votingTimerElement = document.getElementById('voting-timer');
-        const votingStartsTimerElement = document.getElementById('voting-starts-timer');
-        const choosingEndsTimerElement = document.getElementById('choosing-ends-timer');
-
         const processStatus = @json($processStatus);
 
-        if (processStatus && processStatus.status === 'voting' && votingTimerElement) {
+        if (processStatus && processStatus.status === 'voting') {
+            const votingTimerElement = document.getElementById('voting-timer');
             const votingEndsAt = new Date(processStatus.voting_ends_at).getTime();
-            const updateVotingTimer = setInterval(function () {
-                const now = new Date().getTime();
+            const updateVotingTimer = setInterval(() => {
+                const now = Date.now();
                 const distance = votingEndsAt - now;
 
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                if (distance < 0) {
+                if (distance <= 0) {
                     clearInterval(updateVotingTimer);
-                    votingTimerElement.innerHTML = "VOTING CLOSED";
-                    window.location.reload();
-                } else {
-                    votingTimerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                    votingTimerElement.textContent = "VOTING CLOSED";
+                    // Consider a single reload to update the UI state if needed
+                    // window.location.reload(); 
+                    return;
                 }
-            }, 1000);
-        } else if (processStatus && processStatus.status === 'nominating' && votingStartsTimerElement) {
-            const nominationEndsAt = new Date(processStatus.nomination_ends_at).getTime();
-            const updateNominationEndsTimer = setInterval(function () {
-                const now = new Date().getTime();
-                const distance = nominationEndsAt - now;
 
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                if (distance < 0) {
-                    clearInterval(updateNominationEndsTimer);
-                    votingStartsTimerElement.innerHTML = "NOMINATIONS CLOSED";
-                    window.location.reload();
-                } else {
-                    votingStartsTimerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-                }
-            }, 1000);
-        } else if (processStatus && processStatus.status === 'choosing' && choosingEndsTimerElement) {
-            const choosingEndsAt = new Date(processStatus.choosing_ends_at).getTime();
-            const updateChoosingEndsTimer = setInterval(function () {
-                const now = new Date().getTime();
-                const distance = choosingEndsAt - now;
-
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                if (distance < 0) {
-                    clearInterval(updateChoosingEndsTimer);
-                    choosingEndsTimerElement.innerHTML = "CHOOSING CLOSED";
-                    window.location.reload();
-                } else {
-                    choosingEndsTimerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-                }
+                votingTimerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
             }, 1000);
         }
     });

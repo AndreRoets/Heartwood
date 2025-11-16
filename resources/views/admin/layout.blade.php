@@ -13,7 +13,7 @@
 <body class="bg-gray-900 text-white">
 
     <header class="header">
-        <nav class="header__nav container flex justify-between items-center">
+        <nav class="header__nav container flex justify-center items-center">
             {{-- Hamburger menu button for mobile --}}
             <button class="mobile-menu-toggle lg:hidden p-2 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

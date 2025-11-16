@@ -11,38 +11,44 @@
 
         <p class="mb-4">Current Process Status: <span class="font-bold">{{ ucfirst($processStatus->status) }}</span></p>
 
-        @if ($processStatus->status === 'inactive')
-            <form action="{{ route('admin.process.startNomination') }}" method="POST" class="inline-block">
+        <div class="flex space-x-4">
+            {{-- Start Nomination --}}
+            <form action="{{ route('admin.process.startNomination') }}" method="POST">
                 @csrf
-                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Start Nomination Process
+                <button type="submit" class="font-bold py-2 px-4 rounded text-white
+                    @if(!in_array($processStatus->status, ['inactive', 'completed'])) bg-gray-500 cursor-not-allowed @else bg-blue-500 hover:bg-blue-700 @endif"
+                    @if(!in_array($processStatus->status, ['inactive', 'completed'])) disabled @endif>
+                    Start Nominations
                 </button>
             </form>
-        @else
-            <form action="{{ route('admin.process.stop') }}" method="POST" class="inline-block">
+
+            {{-- Start Voting --}}
+            <form action="{{ route('admin.process.startVoting') }}" method="POST">
+                @csrf
+                <button type="submit" class="font-bold py-2 px-4 rounded text-white
+                    @if($processStatus->status !== 'nominating') bg-gray-500 cursor-not-allowed @else bg-green-500 hover:bg-green-700 @endif"
+                    @if($processStatus->status !== 'nominating') disabled @endif>
+                    Start Voting
+                </button>
+            </form>
+
+            {{-- Show Results --}}
+            <form action="{{ route('admin.process.showResults') }}" method="POST">
+                @csrf
+                <button type="submit" class="font-bold py-2 px-4 rounded text-white
+                    @if(!in_array($processStatus->status, ['voting', 'completed'])) bg-gray-500 cursor-not-allowed @else bg-purple-500 hover:bg-purple-700 @endif"
+                    @if(!in_array($processStatus->status, ['voting', 'completed'])) disabled @endif>
+                    Show Results
+                </button>
+            </form>
+
+            {{-- Reset Process --}}
+            <form action="{{ route('admin.process.stop') }}" method="POST" onsubmit="return confirm('Are you sure you want to reset the process? This will delete ALL nominations, votes, and associated images. This action cannot be undone.');">
                 @csrf
                 <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                    Stop All Processes
+                    Reset
                 </button>
             </form>
-
-            @if ($processStatus->status === 'nominating')
-                <form action="{{ route('admin.process.skipToVoting') }}" method="POST" class="inline-block ml-4">
-                    @csrf
-                    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                        Skip to Voting
-                    </button>
-                </form>
-            @endif
-
-            @if ($processStatus->status === 'voting')
-                <form action="{{ route('admin.process.skipToResults') }}" method="POST" class="inline-block ml-4">
-                    @csrf
-                    <button type="submit" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-                        Skip to Results
-                    </button>
-                </form>
-            @endif
-        @endif
+        </div>
     </div>
 @endsection

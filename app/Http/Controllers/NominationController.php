@@ -15,7 +15,7 @@ class NominationController extends Controller
 {
     public function index()
     {
-        $processStatus = ProcessStatus::first(); // Fetch the process status
+        $processStatus = ProcessStatus::firstOrNew([]); // Fetch the process status
         $categories = Category::all(); // Fetch all categories
         $user = Auth::user();
         $votedCategories = [];
@@ -33,14 +33,9 @@ class NominationController extends Controller
     public function showCategoryNominations(Category $category)
     {
         $now = Carbon::now();
-        $processStatus = ProcessStatus::first();
-
-        $nominations = collect();
-
-        if ($processStatus && $processStatus->status == 'voting') {
-            $nominations = Nomination::where('category_id', $category->id)
-                            ->where('status', 'approved')                ->get();
-        }
+        $processStatus = ProcessStatus::firstOrNew([]); // The model accessor will derive the correct status
+        $nominations = Nomination::where('category_id', $category->id)
+                        ->where('status', 'approved')->get();
 
         return view('nominations.category_nominations', compact('nominations', 'category', 'processStatus'));
     }
@@ -48,7 +43,7 @@ class NominationController extends Controller
     public function create()
     {
         $categories = Category::all();
-        $processStatus = ProcessStatus::first(); // Fetch the process status
+        $processStatus = ProcessStatus::firstOrNew([]); // Fetch the process status
         $now = Carbon::now();
 
         if (!$processStatus || $processStatus->status !== 'nominating' || !$now->between($processStatus->nomination_starts_at, $processStatus->nomination_ends_at)) {
@@ -75,7 +70,7 @@ class NominationController extends Controller
 
         $request->validate($rules);
 
-        $processStatus = ProcessStatus::first();
+        $processStatus = ProcessStatus::firstOrNew([]);
         $now = Carbon::now();
 
         if ($processStatus && $processStatus->status == 'nominating' && $now->between($processStatus->nomination_starts_at, $processStatus->nomination_ends_at)) {
@@ -109,10 +104,15 @@ class NominationController extends Controller
 
     public function vote(Nomination $nomination)
     {
-        $processStatus = ProcessStatus::first();
+        $processStatus = ProcessStatus::firstOrNew([]);
         $now = Carbon::now();
 
-        if (!$processStatus || $processStatus->status !== 'voting' || !$now->between($processStatus->nomination_ends_at, $processStatus->voting_ends_at)) {
+        // Defensive check to prevent TypeError if dates are null
+        if (!$processStatus->voting_starts_at || !$processStatus->voting_ends_at) {
+            return redirect()->back()->with('error', 'Voting period is not properly configured. Please contact an administrator.');
+        }
+
+        if ($processStatus->status !== 'voting' || !$now->between($processStatus->voting_starts_at, $processStatus->voting_ends_at)) {
             return redirect()->back()->with('error', 'Voting is not currently open.');
         }
 
@@ -152,8 +152,12 @@ class NominationController extends Controller
 
     public function adminIndex()
     {
-        $nominations = Nomination::where('status', 'pending')->get();
-        return view('admin.nominations.index', compact('nominations'));
+        // Fetch pending nominations and group them by category
+        $nominationsByCategory = Nomination::with('category', 'user')
+            ->where('status', 'pending')
+            ->get()
+            ->groupBy('category.name');
+        return view('admin.nominations.index', compact('nominationsByCategory'));
     }
 
     public function approve(Nomination $nomination)
@@ -170,6 +174,13 @@ class NominationController extends Controller
 
     public function results()
     {
+        $processStatus = ProcessStatus::firstOrNew([]);
+
+        // Only show results if the process is completed.
+        if ($processStatus->status !== 'completed') {
+            return redirect()->route('nominations.index')->with('error', 'Results are not available until voting has ended.');
+        }
+
         $categories = Category::with(['nominations' => function ($query) {
             $query->where('status', 'approved')
                   ->withCount('votes')
@@ -185,6 +196,6 @@ class NominationController extends Controller
             ];
         }
 
-        return view('nominations.results', compact('categoryWinners'));
+        return view('nominations.results', compact('categoryWinners', 'processStatus'));
     }
 }

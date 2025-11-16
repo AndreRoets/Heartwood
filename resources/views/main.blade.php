@@ -39,6 +39,7 @@
                 <div class="hidden lg:block"> {{-- Wrapper div for desktop menu --}}
                     <ul class="header__menu space-x-4 py-4">
                         <li><a href="{{ route('home') }}" class="header__link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
+                        <li><a href="{{ route('builds.index') }}" class="header__link {{ request()->routeIs('builds.index') ? 'active' : '' }}">Builds</a></li>
                         <li class="header__dropdown">
                             <a href="#" class="header__link header__dropdown-toggle">The Heartwood Awards</a>
                             <ul class="header__dropdown-menu">
@@ -74,17 +75,18 @@
         <div class="flex justify-end p-4">
             <button class="mobile-menu-close text-white text-2xl">&times;</button>
         </div>
-        <ul class="mobile-menu-links flex flex-col items-center justify-center h-full space-y-6">
-            <li><a href="{{ route('home') }}" class="header__link text-3xl {{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
+        <ul class="mobile-menu-links flex flex-col items-center space-y-6">
+            <li><a href="{{ route('home') }}" class="header__link text-xl {{ request()->routeIs('home') ? 'active' : '' }}">Home</a></li>
+            <li><a href="{{ route('builds.index') }}" class="header__link text-xl {{ request()->routeIs('builds.index') ? 'active' : '' }}">Builds</a></li>
             <li class="header__dropdown">
-                <a href="#" class="header__link header__dropdown-toggle text-3xl">The Heartwood Awards</a>
+                <a href="#" class="header__link header__dropdown-toggle text-xl">The Heartwood Awards</a>
                 <ul class="header__dropdown-menu mobile-dropdown-menu">
-                    <li><a href="{{ route('nominations.create') }}" class="header__link text-2xl {{ request()->routeIs('nominations.create') ? 'active' : '' }}">Nominate</a></li>
-                    <li><a href="{{ route('nominations.index') }}" class="header__link text-2xl {{ request()->routeIs('nominations.index') ? 'active' : '' }}">Vote</a></li>
-                    <li><a href="{{ route('nominations.results') }}" class="header__link text-2xl {{ request()->routeIs('nominations.results') ? 'active' : '' }}">Results</a></li>
+                    <li><a href="{{ route('nominations.create') }}" class="header__link text-lg {{ request()->routeIs('nominations.create') ? 'active' : '' }}">Nominate</a></li>
+                    <li><a href="{{ route('nominations.index') }}" class="header__link text-lg {{ request()->routeIs('nominations.index') ? 'active' : '' }}">Vote</a></li>
+                    <li><a href="{{ route('nominations.results') }}" class="header__link text-lg {{ request()->routeIs('nominations.results') ? 'active' : '' }}">Results</a></li>
                 </ul>
             </li>
-            <li><a href="#" class="header__link text-3xl">About/Board</a></li>
+            <li><a href="#" class="header__link text-xl">About/Board</a></li>
         </ul>
     </div>
 
@@ -325,14 +327,6 @@
                     mobileMenuToggle.setAttribute('aria-expanded', 'true');
                     const first = getFirstFocusable();
                     if (first) setTimeout(() => first.focus(), 0);
-
-                    // Staggered animation for ink
-                    const links = mobileMenuOverlay.querySelectorAll('.mobile-menu-links > li > .header__link');
-                    links.forEach((link, index) => {
-                        // The base delay is for the menu slide-in, then we add stagger.
-                        const delay = 200 + (index * 50);
-                        link.style.setProperty('--delay', `${delay}ms`);
-                    });
 
                   };
 

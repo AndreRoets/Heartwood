@@ -34,5 +34,12 @@ class DatabaseSeeder extends Seeder
             'name' => 'New Admin User',
             'is_admin' => true,
         ]);
+
+        // Create a new admin user as requested
+        User::factory()->create([
+            'username' => 'admin',
+            'name' => 'Admin',
+            'is_admin' => true,
+        ]);
     }
 }

@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "name": "Stone",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "stone"
+  },
+  {
+    "id": 2,
+    "name": "Granite",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "granite"
+  },
+  {
+    "id": 3,
+    "name": "Polished Granite",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "polished_granite"
+  },
+  {
+    "id": 4,
+    "name": "Diorite",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "diorite"
+  },
+  {
+    "id": 5,
+    "name": "Polished Diorite",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "polished_diorite"
+  },
+  {
+    "id": 6,
+    "name": "Andesite",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "andesite"
+  },
+  {
+    "id": 7,
+    "name": "Polished Andesite",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "polished_andesite"
+  },
+  {
+    "id": 8,
+    "name": "Grass Block",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "grass_block"
+  },
+  {
+    "id": 9,
+    "name": "Dirt",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "dirt"
+  },
+  {
+    "id": 10,
+    "name": "Coarse Dirt",
+    "type": "stackable",
+    "maxStack": 64,
+    "identifier": "coarse_dirt"
+  }
+]

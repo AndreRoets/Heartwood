@@ -80,26 +80,25 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const nominationTimerElement = document.getElementById('nomination-timer');
-        const nominationEndsAt = new Date("{{ $processStatus->nomination_ends_at ?? '' }}").getTime();
+        const processStatus = @json($processStatus);
+        const nominationEndsAt = processStatus ? new Date(processStatus.nomination_ends_at).getTime() : null;
 
         if (nominationTimerElement && nominationEndsAt) {
-            const updateTimer = setInterval(function () {
-                const now = new Date().getTime();
+            const updateTimer = setInterval(() => {
+                const now = Date.now();
                 const distance = nominationEndsAt - now;
+
+                if (distance <= 0) {
+                    clearInterval(updateTimer);
+                    nominationTimerElement.textContent = "NOMINATION CLOSED";
+                    return;
+                }
 
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                if (distance < 0) {
-                    clearInterval(updateTimer);
-                    nominationTimerElement.innerHTML = "NOMINATION CLOSED";
-                    // Optionally, hide the form or reload the page
-                    window.location.reload();
-                } else {
-                    nominationTimerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-                }
+                nominationTimerElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
             }, 1000);
         }
 
@@ -153,6 +152,8 @@
                 nominationModal.style.display = 'none';
                 nomineeNameInput.value = '';
                 nominationDescriptionInput.value = '';
+                // Clear image input fields
+                Array.from(imageUploadFields.querySelectorAll('input[type="file"]')).forEach(input => input.value = '');
             }
         });
     });

@@ -23,10 +23,13 @@
         <div class="mb-6">
             <h3 class="text-lg font-semibold text-white mb-2">Images:</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                @foreach($nomination->images as $image)
-                    <img src="{{ asset('storage/' . $image) }}" alt="Nomination Image" class="w-full h-48 object-cover rounded-lg shadow-md">
-                @endforeach
-            </div>
+  @foreach($nomination->images as $path)
+  <img
+    src="{{ Storage::url($path) }}"
+    alt="Nomination Image"
+    class="w-full h-48 object-cover rounded-lg shadow-md"
+  />
+@endforeach          </div>
         </div>
     @endif
 

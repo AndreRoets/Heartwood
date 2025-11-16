@@ -518,23 +518,12 @@ ul { list-style: none; }
 }
 
 .mobile-menu-links .header__link {
-    /* Animation for staggered slide-in */
-    opacity: 0;
-    transform: translateX(-20px);
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-    transition-delay: var(--delay, 0s);
-
     color: var(--color-navy-dark); /* Darker text for contrast on bright background */
     font-weight: 700;
     padding: 1rem 2rem;
     display: block;
     width: 100%;
-    text-align: left; /* Align text to the left */
-}
-
-.mobile-menu-overlay.is-open .mobile-menu-links .header__link {
-    opacity: 1;
-    transform: translateX(0);
+    text-align: center; /* Align text to the center */
 }
 
 .mobile-menu-links .header__link:hover {
@@ -543,19 +532,20 @@ ul { list-style: none; }
 
 /* Mobile dropdown specific styles */
 .mobile-menu-overlay .header__dropdown-menu {
-    position: static; /* Remove absolute positioning */
-    background-color: transparent; /* Inherit background from overlay or set transparent */
-    box-shadow: none; /* Remove shadow */
-    min-width: auto;
-    padding: 0;
-    top: auto;
-    left: auto;
-    transform: none; /* Remove transform */
-    opacity: 1; /* Always visible when parent is active */
-    visibility: visible; /* Always visible when parent is active */
+    position: static !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    min-width: auto !important;
+    padding: 0 !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
     display: none; /* Hidden by default, toggled by JS */
     text-align: center;
-    z-index: 102; /* Ensure it's above other content in the overlay */
+    z-index: 102;
+    transition: none !important; /* Disable all transitions */
 }
 
 .mobile-menu-overlay .header__dropdown-menu.active {
@@ -563,7 +553,7 @@ ul { list-style: none; }
 }
 
 .mobile-dropdown-menu {
-    display: none;
+    display: none; /* Keep it hidden by default */
 }
 .mobile-dropdown-menu.active {
     display: block;
@@ -574,7 +564,6 @@ ul { list-style: none; }
 
 .mobile-menu-overlay .header__dropdown-menu .header__link {
     padding: 0.75rem 1rem; /* Adjust padding for nested links */
-    font-size: 1.5rem; /* Adjust font size for nested links */
     color: var(--color-navy-dark); /* Ensure color contrast */
 }
 

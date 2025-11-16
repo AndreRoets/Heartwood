@@ -5,23 +5,30 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NominationController;
+use App\Http\Controllers\ProcessController;
+use App\Http\Controllers\BuildController;
+use App\Http\Controllers\BuildItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('home');
-})->name('home');
+})
+->name('home');
 
 Route::get('/portfolio', function () {
     return view('pages.portfolio');
-})->name('portfolio');
+})
+->name('portfolio');
 
 Route::get('/portfolio/web', function () {
     return view('pages.portfolio');
-})->name('portfolio.web');
+})
+->name('portfolio.web');
 
 Route::get('/portfolio/design', function () {
     return view('pages.portfolio');
-})->name('portfolio.design');
+})
+->name('portfolio.design');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'attempt'])->name('login.attempt');
@@ -42,6 +49,14 @@ Route::get('/nominations/{category}', [NominationController::class, 'showCategor
 Route::post('/nominations/{nomination}/vote', [NominationController::class, 'vote'])->middleware('auth')->name('nominations.vote');
 Route::get('/results', [NominationController::class, 'results'])->middleware('auth')->name('nominations.results');
 
+// Build Routes
+Route::get('/builds', [BuildController::class, 'index'])->name('builds.index');
+Route::get('/builds/create', [BuildController::class, 'create'])->middleware('auth')->name('builds.create');
+Route::post('/builds', [BuildController::class, 'store'])->middleware('auth')->name('builds.store');
+Route::get('/builds/{build}', [BuildController::class, 'show'])->name('builds.show');
+Route::delete('/builds/{build}', [BuildController::class, 'destroy'])->middleware('auth')->name('builds.destroy');
+Route::post('/builds/{build}/items/{item}/submit', [BuildItemController::class, 'submit'])->middleware('auth')->name('builds.items.submit');
+
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -54,8 +69,8 @@ Route::middleware(['auth', 'admin'])
         Route::patch('/nominations/{nomination}/reject', [AdminController::class, 'reject'])->name('nominations.reject');
 
         Route::post('/process/start', [AdminController::class, 'startProcess'])->name('process.start');
-        Route::post('/process/skip-to-voting', [AdminController::class, 'skipToVoting'])->name('process.skipToVoting');
-        Route::post('/process/skip-to-results', [AdminController::class, 'skipToResults'])->name('process.skipToResults');
         Route::post('/process/stop', [AdminController::class, 'stopProcess'])->name('process.stop');
         Route::post('/process/start-nomination', [AdminController::class, 'startNomination'])->name('process.startNomination');
+        Route::post('/process/start-voting', [ProcessController::class, 'startVoting'])->name('process.startVoting');
+        Route::post('/process/show-results', [ProcessController::class, 'showResults'])->name('process.showResults');
     });
